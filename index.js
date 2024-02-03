@@ -11,5 +11,11 @@ app.get("/", (req, res) => {
   res.send("Route is working!");
 });
 
+// routes
+const productRoute = require("./routes/product.route")
+
+
+// using the database
+app.use("/api/v1/product", productRoute);
 
 module.exports = app;
