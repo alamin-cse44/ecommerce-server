@@ -1,7 +1,8 @@
 const Product = require("../models/Product");
 
 module.exports.getPrdouctService = async () => {
-  console.log("product service");
+  const result = await Product.find({});
+  return result;
 };
 
 module.exports.createProductService = async (data) => {

@@ -4,7 +4,20 @@ const {
 } = require("../services/product.service");
 
 module.exports.getProduct = async (req, res, next) => {
-  const product = await getPrdouctService();
+  try {
+    const product = await getPrdouctService();
+
+    res.status(200).json({
+      status: "success",
+      message: "Product found successfully",
+      data: product,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "fail",
+      error: error.message,
+    });
+  }
 };
 
 module.exports.createProduct = async (req, res, next) => {
