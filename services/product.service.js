@@ -1,7 +1,10 @@
 const Product = require("../models/Product");
 
-module.exports.getPrdouctService = async () => {
-  const result = await Product.find({});
+module.exports.getPrdouctService = async (filters, queries) => {
+  const result = await Product.find({})
+    .select(queries.fields)
+    .sort(queries.sortBy)
+    .limit(queries.limitBy);
   return result;
 };
 
@@ -49,6 +52,12 @@ module.exports.bulkUpdateProductService = async (data) => {
 
 module.exports.deleteProductByIdService = async (id) => {
   const result = await Product.deleteOne({ _id: id });
+
+  return result;
+};
+
+module.exports.bulkDeleteProductService = async (ids) => {
+  const result = await Product.deleteMany({ _id: ids });
 
   return result;
 };
