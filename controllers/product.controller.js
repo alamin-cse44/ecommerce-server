@@ -9,27 +9,43 @@ const {
 
 module.exports.getProduct = async (req, res, next) => {
   try {
-    const filters = { ...req.query };
+    let filters = { ...req.query };
     const excludeFields = ["sort", "page", "limit"];
     excludeFields.forEach((field) => delete filters[field]);
 
+    //http://localhost:5000/api/v1/product?price[gt]=500
+    let filterString = JSON.stringify(filters);
+    filterString = filterString.replace(
+      /\b(gt|gte|lt|lte)\b/g,
+      (match) => `$${match}`
+    );
+    filters = JSON.parse(filterString);
+    console.log(filters);
+
     const queries = {};
     if (req.query.sort) {
-      // http://localhost:5000/api/v1/product?sort=name price
+      // http://localhost:5000/api/v1/product?sort=name,price&fields=name,price&limit=2
       // price,quantity ----> price quantity
       const sortBy = req.query.sort.split(",").join(" ");
       queries.sortBy = sortBy;
       console.log("sortBy ", sortBy);
     }
-    
-    if(req.query.fields){
+
+    if (req.query.fields) {
       const fields = req.query.fields.split(",").join(" ");
       queries.fields = fields;
     }
 
-    if(req.query.limit){
+    if (req.query.limit) {
       const limitBy = req.query.limit;
       queries.limitBy = limitBy;
+    }
+
+    if (req.query.page) {
+      const { page = 1, limit = 10 } = req.query;
+      const skip = (page - 1) * parseInt(limit);
+      queries.skip = skip;
+      queries.limit = parseInt(limit);
     }
 
     const product = await getPrdouctService(filters, queries);
